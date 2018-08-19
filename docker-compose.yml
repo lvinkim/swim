@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  php:
+    image: lvinkim/php-env-docker:latest
+    volumes:
+      - .:/var/www/html
+      - ./xdebug.disable.ini:/etc/php/7.2/mods-available/xdebug.ini
+    working_dir: /var/www/html
