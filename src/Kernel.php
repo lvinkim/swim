@@ -10,8 +10,9 @@ namespace Lvinkim\Swim;
 
 
 use Lvinkim\Swim\Bundle\Bundle;
-use Lvinkim\Swim\Bundle\ServerBundle;
+use Lvinkim\Swim\Bundle\SwimBundle;
 use Slim\App;
+use Slim\Container;
 
 class Kernel
 {
@@ -19,12 +20,15 @@ class Kernel
 
     protected $settings;
 
+    /** @var Container */
     protected $container;
     protected $rootDir;
     protected $environment;
     protected $debug;
     protected $booted = false;
     protected $name;
+
+    private $projectDir;
 
     protected $bundlesConfig;
 
@@ -39,6 +43,7 @@ class Kernel
         $this->bundlesConfig = $settings['bundles'] ?? false;
         $this->rootDir = $this->getRootDir();
         $this->name = $this->getName();
+        $this->projectDir = $settings['projectDir'] ?? $this->rootDir;
     }
 
     public function boot()
@@ -70,9 +75,19 @@ class Kernel
     protected function initializeContainer()
     {
         $app = new App(['settings' => $this->settings]);
-        $this->container = $app->getContainer();
 
-        $this->container[Kernel::class] = $this;
+        $dependencies = $this->settings["dependencies"] ?? "";
+        $middleware = $this->settings["middleware"] ?? "";
+        $routes = $this->settings["routes"] ?? "";
+
+        $requires = [$dependencies, $middleware, $routes];
+        foreach ($requires as $require) {
+            if (is_file($require)) {
+                require $require . "";
+            }
+        }
+
+        $this->container = $app->getContainer();
         $this->container[App::class] = $app;
     }
 
@@ -93,7 +108,7 @@ class Kernel
      */
     protected function registerBundles()
     {
-        yield new ServerBundle();
+        yield new SwimBundle();
         if (is_file($this->bundlesConfig)) {
             $contents = require strval($this->bundlesConfig) . "";
             foreach ($contents as $class => $envs) {
@@ -124,5 +139,21 @@ class Kernel
         }
 
         return $this->name;
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getProjectDir()
+    {
+        return $this->projectDir;
+    }
+
+    /**
+     * @return Container
+     */
+    public function getContainer()
+    {
+        return $this->container;
     }
 }

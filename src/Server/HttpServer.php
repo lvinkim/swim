@@ -6,17 +6,18 @@
  * Time: 5:06 PM
  */
 
-namespace Lvinkim\Swim\Service;
+namespace Lvinkim\Swim\Server;
 
-use Psr\Container\ContainerInterface;
 use Slim\App;
+use Slim\Container;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Server;
 
-class HttpService
+class HttpServer
 {
-
+    /** @var App */
+    private $app;
     private $container;
 
     protected $server;
@@ -28,7 +29,7 @@ class HttpService
     protected $projectRoot;
     protected $documentRoot;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(Container $container)
     {
         $this->container = $container;
 
@@ -76,9 +77,7 @@ class HttpService
         $slimResponse = new \Slim\Http\Response();
 
         try {
-            /** @var App $app */
-            $app = $this->container[App::class];
-            $slimResponse = $app->process($request, $slimResponse);
+            $slimResponse = $this->app->process($request, $slimResponse);
             $bodyContents = (string)$slimResponse->getBody();
         } catch (\Exception $exception) {
             $bodyContents = "{'error':{$exception->getMessage()}}";
@@ -95,6 +94,8 @@ class HttpService
         swoole_set_process_name("http-kernel worker {$workerId}");
 
         echo $workerId . " : " . __METHOD__ . PHP_EOL;
+
+        $this->app = $this->container->raw(App::class);
     }
 
     public function onManagerStart(Server $server)

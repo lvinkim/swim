@@ -15,7 +15,14 @@ return (function () {
         "debug" => getenv("DEBUG"),
         "displayErrorDetails" => "dev" === getenv("ENV") ? true : false, // set to false in production
         "addContentLengthHeader" => false, // Allow the web server to send the content-length header
-        "bundles" => __DIR__ . '/bundles.php'
+        "projectDir" => dirname(__DIR__),
+        'logger' => [
+            'directory' => dirname(__DIR__) . '/var/logs',
+        ],
+        "bundles" => __DIR__ . "/bundles.php",
+        "dependencies" => __DIR__ . "/dependencies.php",
+        "middleware" => __DIR__ . "/middleware.php",
+        "routes" => __DIR__ . "/routes.php",
     ];
 
 })();

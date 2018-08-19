@@ -9,32 +9,35 @@
 namespace Lvinkim\Swim\Command\Server;
 
 
-use Lvinkim\Swim\Service\HttpService;
-use Psr\Container\ContainerInterface;
+use Lvinkim\Swim\Kernel;
+use Lvinkim\Swim\Server\HttpServer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ServerStartCommand extends Command
 {
-    private $container;
+    private $kernel;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(Kernel $kernel)
     {
         parent::__construct();
-
-        $this->container = $container;
+        $this->kernel = $kernel;
     }
 
     public function configure()
     {
         $this->setName("server:start")
-            ->setDescription("启动服务");
+            ->setDescription("使用 swoole 运行服务");
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $httpService = new HttpService($this->container);
-        $httpService->run();
+        $this->kernel->boot();
+        $container = $this->kernel->getContainer();
+
+        $httpServer = new HttpServer($container);
+        $httpServer->run();
+
     }
 }

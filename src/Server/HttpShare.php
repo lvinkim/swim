@@ -6,7 +6,7 @@
  * Time: 11:19 PM
  */
 
-namespace Lvinkim\Swim\Service;
+namespace Lvinkim\Swim\Server;
 
 class HttpShare
 {

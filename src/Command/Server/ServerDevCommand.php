@@ -3,19 +3,19 @@
  * Created by PhpStorm.
  * User: lvinkim
  * Date: 2018/8/19
- * Time: 4:51 PM
+ * Time: 8:59 PM
  */
 
 namespace Lvinkim\Swim\Command\Server;
 
 
 use Lvinkim\Swim\Kernel;
-use Lvinkim\Swim\Server\HttpShare;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ServerReloadCommand extends Command
+class ServerDevCommand extends Command
 {
     private $kernel;
 
@@ -27,18 +27,19 @@ class ServerReloadCommand extends Command
 
     public function configure()
     {
-        $this->setName("server:reload")
-            ->setDescription("重载 swoole 服务");
+        $this->setName("server:dev:start")
+            ->addArgument("host", InputArgument::OPTIONAL, "监听地址", "0.0.0.0:80")
+            ->setDescription("使用 php -S 运行服务");
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $managerPid = HttpShare::getManagerPid();
-        if ($managerPid > 0) {
-            posix_kill($managerPid, SIGUSR1);
-            $output->writeln("重载服务完成");
-        } else {
-            $output->writeln("未检测到运行的服务");
-        }
+        $host = $input->getArgument("host");
+
+        $projectDir = $this->kernel->getProjectDir();
+
+        $output->writeln("正在监听: http://{$host}");
+
+        exec("php -S {$host} -t {$projectDir}/public");
     }
 }
