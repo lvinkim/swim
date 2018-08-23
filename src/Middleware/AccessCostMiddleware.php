@@ -6,7 +6,7 @@
  * Time: 2:11 PM
  */
 
-namespace Lvinkim\Swim\Service\Middleware;
+namespace Lvinkim\Swim\Middleware;
 
 
 use Lvinkim\Swim\Service\Logger\CustomLogger;
