@@ -8,7 +8,7 @@
     "tuupola/slim-basic-auth": "^3.2",
     "lvinkim/mongo-odm": "^0.3.2",
     "lvinkim/elasticsearch-odm": "^0.1.3",
-    "lvinkim/swim-console": "^0.2.0",
+    "lvinkim/swim-console": "^0.2.1",
     "vlucas/phpdotenv": "^2.5"
   },
   "require-dev": {
