@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "84115b983bb995deaf57c5e50a7340b7",
+    "content-hash": "afacab4b0df596da7c491a4d471f9f8c",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -611,16 +611,16 @@
         },
         {
             "name": "lvinkim/swim-console",
-            "version": "v0.1.1",
+            "version": "v0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lvinkim/swim-console.git",
-                "reference": "6ab65df1f6b7be044260348927dc630ce542d54f"
+                "reference": "12bad4f7e940b7937bc31b38d77dfbbfbd85ab70"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lvinkim/swim-console/zipball/6ab65df1f6b7be044260348927dc630ce542d54f",
-                "reference": "6ab65df1f6b7be044260348927dc630ce542d54f",
+                "url": "https://api.github.com/repos/lvinkim/swim-console/zipball/12bad4f7e940b7937bc31b38d77dfbbfbd85ab70",
+                "reference": "12bad4f7e940b7937bc31b38d77dfbbfbd85ab70",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -645,7 +645,7 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2018-08-19T04:47:50+00:00"
+            "time": "2018-08-26T05:16:34+00:00"
         },
         {
             "name": "monolog/monolog",
