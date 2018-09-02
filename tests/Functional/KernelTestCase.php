@@ -1,13 +1,12 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: bluehead
- * Date: 2018/8/29
- * Time: 下午9:04
+ * User: lvinkim
+ * Date: 2018/9/2
+ * Time: 6:07 PM
  */
 
-namespace Lvinkim\Swim\Test;
-
+namespace Tests\Functional;
 
 use Lvinkim\Swim\Kernel;
 use PHPUnit\Framework\TestCase;
@@ -21,7 +20,7 @@ class KernelTestCase extends TestCase
     /** @var ContainerInterface */
     protected static $container;
 
-    protected static function bootKernel(array $settings=[])
+    protected static function bootKernel(array $settings = [])
     {
         static::$kernel = new Kernel($settings);
         static::$kernel->boot();
