@@ -29,7 +29,7 @@ class HttpServer
     protected $projectRoot;
     protected $documentRoot;
 
-    public function __construct(Container $container)
+    public function __construct(Container $container, array $settings = [])
     {
         $this->container = $container;
 
@@ -79,11 +79,16 @@ class HttpServer
         try {
             $slimResponse = $this->app->process($request, $slimResponse);
             $bodyContents = (string)$slimResponse->getBody();
+            $contentType = $slimResponse->getHeaderLine("Content-Type");
+            var_dump($contentType);
         } catch (\Exception $exception) {
             $bodyContents = "{'error':{$exception->getMessage()}}";
+            $contentType = "";
         }
 
-        $response->header("Content-Type", "application/json;charset=utf-8");
+        $contentType = $contentType ?: "application/json;charset=utf-8";
+        var_dump($contentType);
+        $response->header("Content-Type", $contentType);
         $response->end($bodyContents);
         $this->unsetRequestData();
     }

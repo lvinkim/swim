@@ -7,5 +7,5 @@
  */
 
 return [
-    
+    \Tests\App\Bundle\AppBundle::class => ["all" => true],
 ];

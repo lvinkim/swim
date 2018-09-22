@@ -9,3 +9,4 @@
 /** @var \Slim\App $app */
 
 $app->get('/', \Tests\App\Action\IndexAction::class);
+$app->get('/view', \Tests\App\Action\ViewAction::class);

@@ -28,13 +28,14 @@ class ServerDevCommand extends Command
     public function configure()
     {
         $this->setName("server:dev:start")
-            ->addArgument("host", InputArgument::OPTIONAL, "监听地址", "0.0.0.0:80")
+            ->addArgument("port", InputArgument::OPTIONAL, "监听端口", "8080")
             ->setDescription("使用 php -S 运行服务");
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $host = $input->getArgument("host");
+        $port = $input->getArgument("port");
+        $host = "0.0.0.0:{$port}";
 
         $projectDir = $this->kernel->getProjectDir();
 
