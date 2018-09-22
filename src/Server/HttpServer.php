@@ -39,7 +39,7 @@ class HttpServer
         $this->maxRequest = $settings['max_request'] ?? 3000;// 默认每个 worker 进程处理超过 300 个请求就重启
         $this->dispatchMode = $settings['dispatch_mode'] ?? 3;// 3-抢占模式，1- 默认轮循模式，收到会轮循分配给每一个 worker 进程,
         $this->projectRoot = $settings['project_root'] ?? '/var/www/html';
-        $this->documentRoot = $settings['document_root'] ?? $this->projectRoot . '/assets';
+        $this->documentRoot = $settings['document_root'] ?? $this->projectRoot . '/public';
     }
 
     public function run()
@@ -88,6 +88,7 @@ class HttpServer
         $contentType = $contentType ?: "application/json;charset=utf-8";
         $response->header("Content-Type", $contentType);
         $response->end($bodyContents);
+
         $this->unsetRequestData();
     }
 

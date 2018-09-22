@@ -50,7 +50,10 @@ class ServerStartCommand extends Command
         $this->kernel->boot();
         $container = $this->kernel->getContainer();
 
-        $settings = ["port" => $port];
+        $settings = [
+            "port" => $port,
+            "project_root" => $this->kernel->getProjectDir(),
+        ];
         $workerNum ? $settings["worker_num"] = $workerNum : null;
         $maxRequest ? $settings["max_request"] = $maxRequest : null;
         $dispatchMode ? $settings["dispatch_mode"] = $dispatchMode : null;
