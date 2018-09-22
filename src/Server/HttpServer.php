@@ -8,19 +8,16 @@
 
 namespace Lvinkim\Swim\Server;
 
+use Lvinkim\Swim\Kernel;
 use Slim\App;
-use Slim\Container;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Server;
 
 class HttpServer
 {
-    /** @var App */
-    private $app;
-    private $container;
+    private $kernel;
 
-    protected $server;
     protected $host;
     protected $port;
     protected $workerNum;
@@ -29,9 +26,9 @@ class HttpServer
     protected $projectRoot;
     protected $documentRoot;
 
-    public function __construct(Container $container, array $settings = [])
+    public function __construct(Kernel $kernel, array $settings = [])
     {
-        $this->container = $container;
+        $this->kernel = $kernel;
 
         $this->host = $settings['host'] ?? '0.0.0.0';
         $this->port = $settings['port'] ?? 80;
@@ -46,9 +43,9 @@ class HttpServer
     {
         swoole_set_process_name("http-kernel master");
 
-        $this->server = new \Swoole\Http\Server($this->host, $this->port);
+        $server = new \Swoole\Http\Server($this->host, $this->port);
 
-        $this->server->set([
+        $server->set([
             'worker_num' => $this->workerNum,
             'max_request' => $this->maxRequest,
             'dispatch_mode' => $this->dispatchMode,
@@ -56,28 +53,35 @@ class HttpServer
             'document_root' => $this->documentRoot,
         ]);
 
-        $this->server->on('start', [$this, 'onStart']);
-        $this->server->on('WorkerStart', [$this, 'onWorkerStart']);
-        $this->server->on('ManagerStart', [$this, 'onManagerStart']);
-        $this->server->on('request', [$this, 'onRequest']);
+        $server->on('start', [$this, 'onStart']);
+        $server->on('WorkerStart', [$this, 'onWorkerStart']);
+        $server->on('ManagerStart', [$this, 'onManagerStart']);
+        $server->on('request', [$this, 'onRequest']);
 
-        $this->server->start();
+        $server->start();
     }
 
     public function onRequest(Request $request, Response $response)
     {
+        $settings = $this->kernel->getSettings();
+        $kernel = new Kernel($settings);
+        $kernel->boot();
+
+        /** @var App $app */
+        $app = $kernel->getContainer()->raw(App::class);
+
         $requestData = $this->resolveRequestData($request);
 
         $environment = \Slim\Http\Environment::mock($_SERVER);
-        $request = \Slim\Http\Request::createFromEnvironment($environment);
+        $slimRequest = \Slim\Http\Request::createFromEnvironment($environment);
         if ($requestData) {
-            $request = $request->withParsedBody($requestData);
+            $slimRequest = $slimRequest->withParsedBody($requestData);
         }
 
         $slimResponse = new \Slim\Http\Response();
 
         try {
-            $slimResponse = $this->app->process($request, $slimResponse);
+            $slimResponse = $app->process($slimRequest, $slimResponse);
             $bodyContents = (string)$slimResponse->getBody();
             $contentType = $slimResponse->getHeaderLine("Content-Type");
         } catch (\Exception $exception) {
@@ -96,10 +100,6 @@ class HttpServer
     {
         // onWorkerStart 之后的代码每个进程都需要在内存中保存一份（每处理 max_request 个请求后会重新加载一次）
         swoole_set_process_name("http-kernel worker {$workerId}");
-
-        echo $workerId . " : " . __METHOD__ . PHP_EOL;
-
-        $this->app = $this->container->raw(App::class);
     }
 
     public function onManagerStart(Server $server)

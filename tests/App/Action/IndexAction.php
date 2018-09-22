@@ -13,9 +13,12 @@ use Lvinkim\Swim\Action\Component\ActionInterface;
 use Psr\Container\ContainerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use Tests\App\Service\TestService;
 
 class IndexAction implements ActionInterface
 {
+    /** @var TestService */
+    private $testService;
 
     /**
      * ActionInterface constructor.
@@ -24,7 +27,7 @@ class IndexAction implements ActionInterface
      */
     public function __construct(ContainerInterface $container)
     {
-
+        $this->testService = $container->get(TestService::class);
     }
 
     /**
@@ -35,8 +38,11 @@ class IndexAction implements ActionInterface
      */
     public function __invoke(Request $request, Response $response, array $args)
     {
+        $this->testService->addKey();
+
         return $response->withJson([
-            "data" => mt_rand(1000, 9999)
+            "data" => mt_rand(1000, 9999),
+            "object" => $this->testService->getObject(),
         ]);
     }
 }

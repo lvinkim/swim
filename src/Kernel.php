@@ -156,4 +156,12 @@ class Kernel
     {
         return $this->container;
     }
+
+    /**
+     * @return array
+     */
+    public function getSettings(): array
+    {
+        return $this->settings;
+    }
 }

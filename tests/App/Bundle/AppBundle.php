@@ -8,6 +8,7 @@
 
 namespace Tests\App\Bundle;
 
+use HaydenPierce\ClassFinder\ClassFinder;
 use Lvinkim\Swim\Bundle\Bundle;
 use Lvinkim\Swim\Middleware\AccessCostMiddleware;
 use Lvinkim\Swim\Service\AutoRegister;
@@ -15,7 +16,6 @@ use Psr\Container\ContainerInterface;
 use Slim\App;
 use Slim\Container;
 use Symfony\Component\Console\Application;
-use Tests\App\Service\PlatesService;
 
 class AppBundle extends Bundle
 {
@@ -28,9 +28,9 @@ class AppBundle extends Bundle
 
         $autoRegister = new AutoRegister($container);
 
-        $autoRegister->register([
-            PlatesService::class,
-        ]);
+        $serviceClasses = $this->getAllServiceClasses();
+
+        $autoRegister->register($serviceClasses);
         // ... register more services
 
         /** @var App $app */
@@ -50,8 +50,37 @@ class AppBundle extends Bundle
 
     public function registerCommands(Application $application)
     {
-        $application->addCommands([
-            // ... more commands
-        ]);
+        $commandClasses = $this->getALlCommandClasses();
+
+        $commandObjects = [];
+        foreach ($commandClasses as $commandClass) {
+            $commandObjects[] = new $commandClass($this->container);
+        }
+
+        $application->addCommands($commandObjects);
+    }
+
+    private function getALlCommandClasses()
+    {
+        try {
+            $classes = ClassFinder::getClassesInNamespace("Tests\App\Command");
+        } catch (\Exception $exception) {
+            $classes = [];
+        }
+        return $classes;
+    }
+
+    /**
+     * @return array
+     */
+    private function getAllServiceClasses()
+    {
+        try {
+            $classes = ClassFinder::getClassesInNamespace("Tests\App\Service");
+        } catch (\Exception $exception) {
+            $classes = [];
+        }
+        return $classes;
+
     }
 }

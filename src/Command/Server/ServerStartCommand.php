@@ -48,7 +48,6 @@ class ServerStartCommand extends Command
         $documentRoot = $input->getOption("document_root");
 
         $this->kernel->boot();
-        $container = $this->kernel->getContainer();
 
         $settings = [
             "port" => $port,
@@ -59,7 +58,7 @@ class ServerStartCommand extends Command
         $dispatchMode ? $settings["dispatch_mode"] = $dispatchMode : null;
         $documentRoot ? $settings["document_root"] = $documentRoot : null;
 
-        $httpServer = new HttpServer($container, $settings);
+        $httpServer = new HttpServer($this->kernel, $settings);
         $httpServer->run();
 
     }
