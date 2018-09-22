@@ -80,14 +80,12 @@ class HttpServer
             $slimResponse = $this->app->process($request, $slimResponse);
             $bodyContents = (string)$slimResponse->getBody();
             $contentType = $slimResponse->getHeaderLine("Content-Type");
-            var_dump($contentType);
         } catch (\Exception $exception) {
             $bodyContents = "{'error':{$exception->getMessage()}}";
             $contentType = "";
         }
 
         $contentType = $contentType ?: "application/json;charset=utf-8";
-        var_dump($contentType);
         $response->header("Content-Type", $contentType);
         $response->end($bodyContents);
         $this->unsetRequestData();
