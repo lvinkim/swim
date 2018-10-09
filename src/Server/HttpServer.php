@@ -91,7 +91,12 @@ class HttpServer
 
         $contentType = $contentType ?: "application/json;charset=utf-8";
         $response->header("Content-Type", $contentType);
-        $response->end($bodyContents);
+
+        $contentBlocks = str_split($bodyContents, 2046 * 1024);
+        foreach ($contentBlocks as $block) {
+            $response->write($block);
+        }
+        $response->end();
 
         $this->unsetRequestData();
     }
